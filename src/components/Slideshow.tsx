@@ -18,7 +18,7 @@ interface SlideshowProps {
   currentIndex: number;
   onClose: () => void;
   onIndexChange: (index: number) => void;
- 
+  formatFileSize: (bytes: number) => string;
 }
 
 export function Slideshow({
@@ -26,7 +26,7 @@ export function Slideshow({
   currentIndex,
   onClose,
   onIndexChange,
- 
+  formatFileSize,
 }: SlideshowProps) {
   const [isPlaying, setIsPlaying] = useState(true);
   const [showInfo, setShowInfo] = useState(true);
