@@ -18,7 +18,7 @@ interface SlideshowProps {
   currentIndex: number;
   onClose: () => void;
   onIndexChange: (index: number) => void;
-  formatFileSize: (bytes: number) => string;
+ 
 }
 
 export function Slideshow({
@@ -26,7 +26,7 @@ export function Slideshow({
   currentIndex,
   onClose,
   onIndexChange,
-  formatFileSize,
+ 
 }: SlideshowProps) {
   const [isPlaying, setIsPlaying] = useState(true);
   const [showInfo, setShowInfo] = useState(true);
@@ -349,42 +349,8 @@ export function Slideshow({
                       </div>
                     </div>
                   )}
-
-                 
-                  {/* EXIF data */}
-                  {(currentPhoto.aperture || currentPhoto.iso || currentPhoto.focalLength || currentPhoto.exposure) && (
-                    <>
-                      <div className="border-t border-white/10 pt-3 mt-3">
-                        <p className="text-white/40 text-xs uppercase tracking-wider mb-2">EXIF</p>
-                        <div className="grid grid-cols-2 gap-2">
-                          {currentPhoto.aperture && (
-                            <div className="bg-white/5 rounded-lg p-2">
-                              <p className="text-white/40 text-[10px]">Aperture</p>
-                              <p className="text-white/80 text-xs">{currentPhoto.aperture}</p>
-                            </div>
-                          )}
-                          {currentPhoto.iso && (
-                            <div className="bg-white/5 rounded-lg p-2">
-                              <p className="text-white/40 text-[10px]">ISO</p>
-                              <p className="text-white/80 text-xs">{currentPhoto.iso}</p>
-                            </div>
-                          )}
-                          {currentPhoto.focalLength && (
-                            <div className="bg-white/5 rounded-lg p-2">
-                              <p className="text-white/40 text-[10px]">Focal Length</p>
-                              <p className="text-white/80 text-xs">{currentPhoto.focalLength}</p>
-                            </div>
-                          )}
-                          {currentPhoto.exposure && (
-                            <div className="bg-white/5 rounded-lg p-2">
-                              <p className="text-white/40 text-[10px]">Exposure</p>
-                              <p className="text-white/80 text-xs">{currentPhoto.exposure}</p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </>
-                  )}
+              
+                  
 
                   
                 </div>
