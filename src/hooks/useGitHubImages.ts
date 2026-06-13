@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import exifr from 'exifr'; // Import the fast EXIF extraction library
 import type { Photo, RepoInfo, GitHubContent } from '@/types';
 
 const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'];
@@ -17,10 +18,6 @@ function formatFileSize(bytes: number): string {
 }
 
 function parseRepoUrl(url: string): RepoInfo | null {
-  // Handle GitHub repo URL formats:
-  // https://github.com/owner/repo
-  // https://github.com/owner/repo/tree/branch/path
-  // https://github.com/owner/repo/blob/branch/path
   const patterns = [
     /github\.com\/([^\/]+)\/([^\/]+)\/?$/,
     /github\.com\/([^\/]+)\/([^\/]+)\/tree\/([^\/]+)\/(.+)/,
@@ -43,7 +40,6 @@ function parseRepoUrl(url: string): RepoInfo | null {
     }
   }
 
-  // Handle shorthand: owner/repo
   const shorthand = url.match(/^([^\/\s]+)\/([^\/\s]+)(?:\/(.*))?$/);
   if (shorthand) {
     return {
@@ -55,6 +51,27 @@ function parseRepoUrl(url: string): RepoInfo | null {
   }
 
   return null;
+}
+
+// Helper function to extract EXIF DateTimeOriginal directly from image URL
+async function extractExifDate(url: string): Promise<string | undefined> {
+  try {
+    // Only pass true for properties we actually need to save parsing performance
+    const output = await exifr.parse(url, {
+      tiff: true,
+      exif: ['DateTimeOriginal'], 
+    });
+
+    if (output && output.DateTimeOriginal) {
+      const date = new Date(output.DateTimeOriginal);
+      // Format as standard YYYY-MM-DD format
+      return !isNaN(date.getTime()) ? date.toISOString().split('T')[0] : undefined;
+    }
+  } catch (error) {
+    // Gracefully handle images with missing EXIF data or CORS restrictions
+    console.warn(`Failed to parse EXIF metadata for ${url}:`, error);
+  }
+  return undefined;
 }
 
 export function useGitHubImages() {
@@ -78,7 +95,6 @@ export function useGitHubImages() {
 
       setRepoInfo(info);
 
-      // Try main branch first, then master
       const branches = [info.branch];
       if (info.branch === 'main') branches.push('master');
       if (info.branch === 'master') branches.push('main');
@@ -105,7 +121,6 @@ export function useGitHubImages() {
 
       const items = Array.isArray(contents) ? contents : [contents];
 
-      // Filter for image files
       const imageFiles = items.filter(
         (item): item is GitHubContent =>
           item.type === 'file' && isImageFile(item.name) && !!item.download_url
@@ -115,47 +130,52 @@ export function useGitHubImages() {
         throw new Error('No image files found in the specified path.');
       }
 
-      const fetchedPhotos: Photo[] = imageFiles.map((file) => {
+      // 1. Map raw items into structural photo meta objects
+      const basePhotos: Photo[] = imageFiles.map((file) => {
         const nameWithoutExt = file.name.replace(/\.[^/.]+$/, '');
-        // Try to extract date from filename (common patterns: YYYY-MM-DD or IMG_YYYYMMDD)
-        let dateTaken: string | undefined;
-        const dateMatch = file.name.match(/(\d{4}[-_]?\d{2}[-_]?\d{2})/);
-        if (dateMatch) {
-          const d = dateMatch[1].replace(/_/g, '-');
-          dateTaken = d;
-        }
-
         return {
           id: file.sha,
           name: nameWithoutExt,
-          url: file.download_url!.replace('https://raw.githubusercontent.com/', `https://raw.githubusercontent.com/`),
+          url: file.download_url!,
           downloadUrl: file.download_url!,
           size: file.size,
           path: file.path,
           type: file.name.split('.').pop()?.toUpperCase() || 'IMAGE',
-          dateTaken,
+          dateTaken: undefined, // Will fill this using metadata / filename parsing
         };
       });
 
-      // Try to load image dimensions
-      const photosWithDimensions = await Promise.all(
-        fetchedPhotos.map(
-          (photo) =>
-            new Promise<Photo>((resolve) => {
-              const img = new Image();
-              img.onload = () => {
-                resolve({
-                  ...photo,
-                  dimensions: { width: img.naturalWidth, height: img.naturalHeight },
-                });
-              };
-              img.onerror = () => resolve(photo);
-              img.src = photo.url;
-            })
-        )
+      // 2. Concurrently load metadata and dimensions for all items
+      const enrichedPhotos = await Promise.all(
+        basePhotos.map(async (photo) => {
+          // Attempt EXIF parse first
+          let dateTaken = await extractExifDate(photo.url);
+
+          // Fallback to filename string regex if EXIF date metadata is missing
+          if (!dateTaken) {
+            const dateMatch = photo.path.split('/').pop()?.match(/(\d{4}[-_]?\d{2}[-_]?\d{2})/);
+            if (dateMatch) {
+              dateTaken = dateMatch[1].replace(/_/g, '-');
+            }
+          }
+
+          // Fetch original layout dimensions via HTMLImageElement
+          const dimensions = await new Promise<{ width: number; height: number } | undefined>((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve({ width: img.naturalWidth, height: img.naturalHeight });
+            img.onerror = () => resolve(undefined);
+            img.src = photo.url;
+          });
+
+          return {
+            ...photo,
+            dateTaken,
+            dimensions,
+          };
+        })
       );
 
-      setPhotos(photosWithDimensions);
+      setPhotos(enrichedPhotos);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unexpected error occurred');
     } finally {
