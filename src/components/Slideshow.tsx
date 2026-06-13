@@ -42,6 +42,26 @@ export function Slideshow({
 
   const currentPhoto = photos[currentIndex];
 
+  // Format a date string/timestamp to "MM/DD/YYYY, HH:MM AM/PM" or similar
+function formatDateTaken(dateInput) {
+  if (!dateInput) return '';
+  
+  const date = new Date(dateInput);
+  
+  if (isNaN(date.getTime())) return 'Invalid date';
+
+  return date.toLocaleString('en-US', {
+    month: 'short',      // "Jun"
+    day: 'numeric',      // "13"
+    year: 'numeric',     // "2026"
+    hour: 'numeric',     // "9"
+    minute: '2-digit',   // "07"
+    hour12: true         // AM/PM format
+  });
+  // Output: "Jun 13, 2026, 9:07 AM"
+}
+
+
   // Auto-advance slideshow
   useEffect(() => {
     if (isPlaying) {
@@ -337,9 +357,9 @@ export function Slideshow({
                   {currentPhoto.name}
                 </h3>
 
-                <div className="space-y-3">
+                <div className="space-y-3" >
                   {/* File type */}
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3" style={{ display: 'none' }}>
                     <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
                       <Type className="w-4 h-4 text-white/70" />
                     </div>
@@ -351,7 +371,7 @@ export function Slideshow({
 
                   {/* Dimensions */}
                   {currentPhoto.dimensions && (
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3" style={{ display: 'none' }}>
                       <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
                         <Maximize2 className="w-4 h-4 text-white/70" />
                       </div>
@@ -383,14 +403,14 @@ export function Slideshow({
                       </div>
                       <div>
                         <p className="text-white/40 text-xs uppercase tracking-wider">Date</p>
-                        <p className="text-white/90 text-sm">{currentPhoto.dateTaken}</p>
+                        <p className="text-white/90 text-sm"> {formatDateTaken(photo.dateTaken)}</p>
                       </div>
                     </div>
                   )}
 
                   {/* Camera */}
                   {currentPhoto.camera && (
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3" style={{ display: 'none' }}>
                       <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
                         <Aperture className="w-4 h-4 text-white/70" />
                       </div>
@@ -404,7 +424,7 @@ export function Slideshow({
                   {/* EXIF data */}
                   {(currentPhoto.aperture || currentPhoto.iso || currentPhoto.focalLength || currentPhoto.exposure) && (
                     <>
-                      <div className="border-t border-white/10 pt-3 mt-3">
+                      <div className="border-t border-white/10 pt-3 mt-3" style={{ display: 'none' }}>
                         <p className="text-white/40 text-xs uppercase tracking-wider mb-2">EXIF</p>
                         <div className="grid grid-cols-2 gap-2">
                           {currentPhoto.aperture && (
@@ -437,7 +457,7 @@ export function Slideshow({
                   )}
 
                   {/* File path */}
-                  <div className="border-t border-white/10 pt-3 mt-3">
+                  <div className="border-t border-white/10 pt-3 mt-3" style={{ display: 'none' }}>
                     <p className="text-white/40 text-xs uppercase tracking-wider mb-1">Path</p>
                     <p className="text-white/60 text-xs break-all">{currentPhoto.path}</p>
                   </div>
