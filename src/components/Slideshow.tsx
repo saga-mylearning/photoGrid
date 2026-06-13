@@ -338,42 +338,7 @@ export function Slideshow({
                 </h3>
 
                 <div className="space-y-3">
-                  {/* File type */}
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
-                      <Type className="w-4 h-4 text-white/70" />
-                    </div>
-                    <div>
-                      <p className="text-white/40 text-xs uppercase tracking-wider">Format</p>
-                      <p className="text-white/90 text-sm">{currentPhoto.type}</p>
-                    </div>
-                  </div>
-
-                  {/* Dimensions */}
-                  {currentPhoto.dimensions && (
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
-                        <Maximize2 className="w-4 h-4 text-white/70" />
-                      </div>
-                      <div>
-                        <p className="text-white/40 text-xs uppercase tracking-wider">Dimensions</p>
-                        <p className="text-white/90 text-sm">
-                          {currentPhoto.dimensions.width} x {currentPhoto.dimensions.height} px
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* File size */}
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
-                      <HardDrive className="w-4 h-4 text-white/70" />
-                    </div>
-                    <div>
-                      <p className="text-white/40 text-xs uppercase tracking-wider">File Size</p>
-                      <p className="text-white/90 text-sm">{formatFileSize(currentPhoto.size)}</p>
-                    </div>
-                  </div>
+                 
 
                   {/* Date */}
                   {currentPhoto.dateTaken && (
@@ -388,19 +353,7 @@ export function Slideshow({
                     </div>
                   )}
 
-                  {/* Camera */}
-                  {currentPhoto.camera && (
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
-                        <Aperture className="w-4 h-4 text-white/70" />
-                      </div>
-                      <div>
-                        <p className="text-white/40 text-xs uppercase tracking-wider">Camera</p>
-                        <p className="text-white/90 text-sm">{currentPhoto.camera}</p>
-                      </div>
-                    </div>
-                  )}
-
+                 
                   {/* EXIF data */}
                   {(currentPhoto.aperture || currentPhoto.iso || currentPhoto.focalLength || currentPhoto.exposure) && (
                     <>
@@ -436,11 +389,7 @@ export function Slideshow({
                     </>
                   )}
 
-                  {/* File path */}
-                  <div className="border-t border-white/10 pt-3 mt-3">
-                    <p className="text-white/40 text-xs uppercase tracking-wider mb-1">Path</p>
-                    <p className="text-white/60 text-xs break-all">{currentPhoto.path}</p>
-                  </div>
+                  
                 </div>
               </div>
             </motion.div>
