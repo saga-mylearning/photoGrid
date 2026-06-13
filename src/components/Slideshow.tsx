@@ -8,6 +8,9 @@ import {
   Play,
   Info,
   Calendar,
+  Aperture,
+  HardDrive,
+  Type,
   Maximize2,
   Minimize2,
 } from 'lucide-react';
@@ -335,7 +338,42 @@ export function Slideshow({
                 </h3>
 
                 <div className="space-y-3">
-                 
+                  {/* File type */}
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
+                      <Type className="w-4 h-4 text-white/70" />
+                    </div>
+                    <div>
+                      <p className="text-white/40 text-xs uppercase tracking-wider">Format</p>
+                      <p className="text-white/90 text-sm">{currentPhoto.type}</p>
+                    </div>
+                  </div>
+
+                  {/* Dimensions */}
+                  {currentPhoto.dimensions && (
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
+                        <Maximize2 className="w-4 h-4 text-white/70" />
+                      </div>
+                      <div>
+                        <p className="text-white/40 text-xs uppercase tracking-wider">Dimensions</p>
+                        <p className="text-white/90 text-sm">
+                          {currentPhoto.dimensions.width} x {currentPhoto.dimensions.height} px
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* File size */}
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
+                      <HardDrive className="w-4 h-4 text-white/70" />
+                    </div>
+                    <div>
+                      <p className="text-white/40 text-xs uppercase tracking-wider">File Size</p>
+                      <p className="text-white/90 text-sm">{formatFileSize(currentPhoto.size)}</p>
+                    </div>
+                  </div>
 
                   {/* Date */}
                   {currentPhoto.dateTaken && (
@@ -349,10 +387,60 @@ export function Slideshow({
                       </div>
                     </div>
                   )}
-              
-                  
 
-                  
+                  {/* Camera */}
+                  {currentPhoto.camera && (
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
+                        <Aperture className="w-4 h-4 text-white/70" />
+                      </div>
+                      <div>
+                        <p className="text-white/40 text-xs uppercase tracking-wider">Camera</p>
+                        <p className="text-white/90 text-sm">{currentPhoto.camera}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* EXIF data */}
+                  {(currentPhoto.aperture || currentPhoto.iso || currentPhoto.focalLength || currentPhoto.exposure) && (
+                    <>
+                      <div className="border-t border-white/10 pt-3 mt-3">
+                        <p className="text-white/40 text-xs uppercase tracking-wider mb-2">EXIF</p>
+                        <div className="grid grid-cols-2 gap-2">
+                          {currentPhoto.aperture && (
+                            <div className="bg-white/5 rounded-lg p-2">
+                              <p className="text-white/40 text-[10px]">Aperture</p>
+                              <p className="text-white/80 text-xs">{currentPhoto.aperture}</p>
+                            </div>
+                          )}
+                          {currentPhoto.iso && (
+                            <div className="bg-white/5 rounded-lg p-2">
+                              <p className="text-white/40 text-[10px]">ISO</p>
+                              <p className="text-white/80 text-xs">{currentPhoto.iso}</p>
+                            </div>
+                          )}
+                          {currentPhoto.focalLength && (
+                            <div className="bg-white/5 rounded-lg p-2">
+                              <p className="text-white/40 text-[10px]">Focal Length</p>
+                              <p className="text-white/80 text-xs">{currentPhoto.focalLength}</p>
+                            </div>
+                          )}
+                          {currentPhoto.exposure && (
+                            <div className="bg-white/5 rounded-lg p-2">
+                              <p className="text-white/40 text-[10px]">Exposure</p>
+                              <p className="text-white/80 text-xs">{currentPhoto.exposure}</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* File path */}
+                  <div className="border-t border-white/10 pt-3 mt-3">
+                    <p className="text-white/40 text-xs uppercase tracking-wider mb-1">Path</p>
+                    <p className="text-white/60 text-xs break-all">{currentPhoto.path}</p>
+                  </div>
                 </div>
               </div>
             </motion.div>
