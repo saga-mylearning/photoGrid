@@ -8,9 +8,6 @@ import {
   Play,
   Info,
   Calendar,
-  Aperture,
-  HardDrive,
-  Type,
   Maximize2,
   Minimize2,
 } from 'lucide-react';
