@@ -43,7 +43,7 @@ export function Slideshow({
   const currentPhoto = photos[currentIndex];
 
   // Format a date string/timestamp to "MM/DD/YYYY, HH:MM AM/PM" or similar
-function formatDateTaken(dateInput) {
+function formatDateTaken(dateInput: string | number | Date | null | undefined): string {
   if (!dateInput) return '';
   
   const date = new Date(dateInput);
