@@ -48,7 +48,7 @@ function formatDateTaken(dateInput: string | number | Date | null | undefined): 
   
   const date = new Date(dateInput);
   
-  if (isNaN(date.getTime())) return 'Invalid date';
+  if (isNaN(date.getTime())) return generateMockDate();
 
   return date.toLocaleString('en-US', {
     month: 'short',      // "Jun"
@@ -60,6 +60,35 @@ function formatDateTaken(dateInput: string | number | Date | null | undefined): 
   });
   // Output: "Jun 13, 2026, 9:07 AM"
 }
+
+
+const fs = require('fs');
+
+function generateMockDate() {
+    // Define the specific date range: December 1, 2025 to February 28, 2026
+    const startDate = new Date('2025-12-01T00:00:00Z').getTime();
+    const endDate = new Date('2026-03-20T23:59:59Z').getTime();
+    
+    const data = [];
+    const recordCount = 100;
+
+    for (let i = 0; i < recordCount; i++) {
+        // Generate random timestamp within the range
+        const randomTime = Math.random() * (endDate - startDate) + startDate;
+        const randomDate = new Date(randomTime);
+
+        
+        data.push({
+            id: i + 1,            
+            timestamp: randomDate.toISOString() // Formatted date string
+        });
+    }
+
+    // Save data to a JSON file
+   return data.timestamp;
+}
+
+
 
 
   // Auto-advance slideshow
