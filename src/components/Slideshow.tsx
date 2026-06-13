@@ -48,7 +48,7 @@ function formatDateTaken(dateInput: string | number | Date | null | undefined): 
   
   const date = new Date(dateInput);
   
-  if (isNaN(date.getTime())) return generateMockDate();
+  if (isNaN(date.getTime())) return getRandomTimestamp();
 
   return date.toLocaleString('en-US', {
     month: 'short',      // "Jun"
@@ -61,35 +61,17 @@ function formatDateTaken(dateInput: string | number | Date | null | undefined): 
   // Output: "Jun 13, 2026, 9:07 AM"
 }
 
-
-const fs = require('fs');
-
-function generateMockDate() {
+function getRandomTimestamp() {
     // Define the specific date range: December 1, 2025 to February 28, 2026
     const startDate = new Date('2025-12-01T00:00:00Z').getTime();
     const endDate = new Date('2026-03-20T23:59:59Z').getTime();
+
+    // Generate a single random timestamp within the range
+    const randomTime = Math.random() * (endDate - startDate) + startDate;
     
-    const data = [];
-    const recordCount = 100;
-
-    for (let i = 0; i < recordCount; i++) {
-        // Generate random timestamp within the range
-        const randomTime = Math.random() * (endDate - startDate) + startDate;
-        const randomDate = new Date(randomTime);
-
-        
-        data.push({
-            id: i + 1,            
-            timestamp: randomDate.toISOString() // Formatted date string
-        });
-    }
-
-    // Save data to a JSON file
-   return data.timestamp;
+    // Return only the ISO timestamp string
+    return new Date(randomTime).toISOString();
 }
-
-
-
 
   // Auto-advance slideshow
   useEffect(() => {
