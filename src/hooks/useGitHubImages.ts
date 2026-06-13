@@ -59,7 +59,7 @@ async function extractExifDate(url: string): Promise<string | undefined> {
     // Only pass true for properties we actually need to save parsing performance
     const output = await exifr.parse(url, {
       tiff: true,
-      exif: ['DateTimeOriginal'], 
+      exif: true,
     });
 
     if (output && output.DateTimeOriginal) {
