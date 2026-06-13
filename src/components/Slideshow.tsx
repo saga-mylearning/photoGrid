@@ -403,7 +403,7 @@ function formatDateTaken(dateInput: string | number | Date | null | undefined): 
                       </div>
                       <div>
                         <p className="text-white/40 text-xs uppercase tracking-wider">Date</p>
-                        <p className="text-white/90 text-sm"> {formatDateTaken(photo.dateTaken)}</p>
+                        <p className="text-white/90 text-sm"> {formatDateTaken(currentPhoto.dateTaken)}</p>
                       </div>
                     </div>
                   )}
