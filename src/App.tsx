@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Images,
@@ -14,12 +14,13 @@ import { PhotoGrid } from '@/components/PhotoGrid';
 import { Slideshow } from '@/components/Slideshow';
 
 // Demo repository with images
-const DEMO_REPO = 'microsoft/fluentui-system-icons';
+const DEMO_REPO = 'https://github.com/saga-mylearning/photoGrid/tree/main/';
 const DEMO_PATH = 'assets';
 
 function App() {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState(`${DEMO_REPO}/${DEMO_PATH}`);
   const [slideshowIndex, setSlideshowIndex] = useState<number | null>(null);
+  const loadButtonRef = useRef<HTMLButtonElement | null>(null);
   const { photos, loading, error, fetchImages, repoInfo, formatFileSize } =
     useGitHubImages();
 
@@ -35,6 +36,15 @@ function App() {
     setInput(`${DEMO_REPO}/${DEMO_PATH}`);
     fetchImages(`${DEMO_REPO}/${DEMO_PATH}`);
   };
+
+  // On first load, set default repo and trigger fetch (and click) once
+  useEffect(() => {
+    // Trigger the same action as clicking the Load button
+    fetchImages(`${DEMO_REPO}/${DEMO_PATH}`);
+    // Optionally simulate a button click for UI effects
+    if (loadButtonRef.current) loadButtonRef.current.click();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const openSlideshow = (index: number) => {
     setSlideshowIndex(index);
@@ -128,6 +138,7 @@ function App() {
                 disabled={loading}
               />
               <button
+                ref={loadButtonRef}
                 type="submit"
                 disabled={loading}
                 className="mr-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:hover:bg-indigo-600 text-white rounded-lg text-sm font-medium transition-all flex items-center gap-2"
